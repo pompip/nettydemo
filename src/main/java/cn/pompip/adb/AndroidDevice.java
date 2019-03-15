@@ -6,6 +6,7 @@ import com.android.ddmlib.Client;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,12 +82,38 @@ public class AndroidDevice {
 
     }
 
-    public void exeCommand(String command) {
+    public void exeCommandNoResult(String command) {
         try {
-            ResultReceiver resultReceiver = new ResultReceiver();
+            NullOutputReceiver resultReceiver = new NullOutputReceiver();
             iDevice.executeShellCommand(command, resultReceiver);
 
         } catch (TimeoutException | AdbCommandRejectedException | IOException | ShellCommandUnresponsiveException e) {
+            e.printStackTrace();
+        }
+    }
+    public void exeCommand(String command) {
+        try {
+            CountDownLatch countDownLatch = new CountDownLatch(1);
+            CollectingOutputReceiver resultReceiver = new CollectingOutputReceiver(countDownLatch);
+            iDevice.executeShellCommand(command, resultReceiver);
+
+            countDownLatch.await();
+            Log.i(this,resultReceiver.getOutput());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void root(){
+        try {
+            iDevice.root();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        } catch (AdbCommandRejectedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ShellCommandUnresponsiveException e) {
             e.printStackTrace();
         }
     }
