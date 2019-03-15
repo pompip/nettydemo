@@ -1,6 +1,5 @@
 package cn.pompip.adb;
 
-import cn.pompip.Log;
 import com.android.ddmlib.*;
 
 import java.util.List;

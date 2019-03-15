@@ -4,6 +4,7 @@ import cn.pompip.adb.AndroidDevice;
 import cn.pompip.adb.AndroidTask;
 import cn.pompip.adb.App;
 import cn.pompip.adb.Tools;
+import cn.pompip.utils.Log;
 import org.junit.Test;
 
 import java.util.ArrayList;

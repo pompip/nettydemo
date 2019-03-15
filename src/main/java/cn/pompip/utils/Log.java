@@ -1,4 +1,4 @@
-package cn.pompip;
+package cn.pompip.utils;
 
 public class Log {
     public static void i(Object tag, Object message) {

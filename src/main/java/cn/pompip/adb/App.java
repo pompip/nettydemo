@@ -1,8 +1,7 @@
 package cn.pompip.adb;
 
-import cn.pompip.Log;
+import cn.pompip.utils.Log;
 import com.android.ddmlib.Client;
-import com.android.ddmlib.IDevice;
 
 import java.net.URL;
 
