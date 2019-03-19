@@ -9,11 +9,8 @@ import cn.pompip.utils.Res;
 import org.junit.Test;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -80,7 +77,7 @@ public class TestSome {
     }
     @Test public void testFile(){
 
-        File file = Res.get("/html/chat.html");
+        File file = Res.get("/web/chat.html");
         System.out.println(file.getAbsolutePath());
     }
 

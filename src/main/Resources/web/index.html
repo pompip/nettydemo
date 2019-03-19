@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <style>
+        textarea {
+            height: 30em;
+            width: 20em;
+        }
+    </style>
+    <script>
+        function receive(msg) {
+            var area = $("#receive-area");
+            area.text(area.text()+"\n"+msg);
+        }
+
+        var ws = new WebSocket("ws://"+window.location.host+"/ws");
+
+        function send(){
+            var msg = $("#input-box").val();
+
+            var area = $("#input-area");
+            area.text(area.text()+"\n"+msg);
+
+            ws.send(msg);
+        }
+        ws.onopen = function (ev) {
+            receive("链接成功")
+        };
+        ws.onmessage = function (ev) {
+            receive(ev.data)
+        };
+        ws.onclose = function (ev) {
+            receive("关闭")
+        };
+    </script>
+</head>
+<body>
+<label for="receive-area">接收</label> <textarea id="receive-area"> </textarea>
+<label for="input-area">发送</label> <textarea id="input-area"> </textarea>
+<br>
+<label for="input-box">请输入:</label> <input id="input-box">
+<button class="send" onclick="send()">发送</button>
+
+</body>
+</html>

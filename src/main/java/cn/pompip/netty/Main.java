@@ -2,25 +2,16 @@ package cn.pompip.netty;
 
 import cn.pompip.utils.Res;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DecoderResult;
-import io.netty.handler.codec.DecoderResultProvider;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import kotlin.text.Charsets;
 
-import java.io.File;
 import java.time.LocalDateTime;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
@@ -59,14 +50,14 @@ public class Main {
 //                            System.out.println(msg.uri());
 //                            System.out.println(msg.method());
                             System.out.println(msg.getClass());
-                            ChunkedFile file = new ChunkedFile(Res.get("/html/chat.html"));
+                            ChunkedFile file = new ChunkedFile(Res.get("/web/index.html"));
                             DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                                     HttpResponseStatus.OK);
 
                             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html;charset=UTF-8");
 //                            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
                             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-                            response.headers().add(CONTENT_LENGTH, file.length());
+                            response.headers().add(HttpHeaderNames.CONTENT_LENGTH, file.length());
                             ctx.write(response);
                             ctx.write(file);
 

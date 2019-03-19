@@ -14,9 +14,9 @@
          public String msgData;
          */
 
-        let chatMessage = [];
-        let online = [];
-        let meID;
+        var chatMessage = [];
+        var online = [];
+        var meID;
 
         function receiveMsg(msg) {
             console.log(msg);
@@ -36,7 +36,7 @@
         }
 
         function refreshChatArea() {
-            let inChat = "";
+            var inChat = "";
             for (let i of chatMessage) {
                 if (toUserID === i.fromUserID || toUserID === i.toUserID) {
                     inChat += ("<p>" + i.fromUserID + " : " + i.msgData + "</p>");
@@ -67,7 +67,7 @@
             })
         }
 
-        let ws = new WebSocket("ws://java.asuscomm.com:8000"  + "/ws");
+        let ws = new WebSocket("/ws");
         ws.onmessage = function (ev) {
             let data = ev.data;
             receiveMsg(data)
