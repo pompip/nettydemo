@@ -7,15 +7,18 @@
     <title>index</title>
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
     <style>
-        textarea {
+        div {
             height: 30em;
             width: 20em;
+            background: gray;
+            float:left;
+            margin:1em;
         }
     </style>
     <script>
         function receive(msg) {
             var area = $("#receive-area");
-            area.text(area.text()+"\n"+msg);
+            area.append(msg+"<br>");
         }
 
         var ws = new WebSocket("ws://"+window.location.host+"/ws");
@@ -24,7 +27,7 @@
             var msg = $("#input-box").val();
 
             var area = $("#input-area");
-            area.text(area.text()+"\n"+msg);
+            area.append(msg+"<br>");
 
             ws.send(msg);
         }
@@ -40,9 +43,8 @@
     </script>
 </head>
 <body>
-<label for="receive-area">接收</label> <textarea id="receive-area"> </textarea>
-<label for="input-area">发送</label> <textarea id="input-area"> </textarea>
-<br>
+<div id="receive-area"> </div>
+<div id="input-area"> </div>
 <label for="input-box">请输入:</label> <input id="input-box">
 <button class="send" onclick="send()">发送</button>
 
