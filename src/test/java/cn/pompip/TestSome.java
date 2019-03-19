@@ -5,14 +5,19 @@ import cn.pompip.adb.AndroidTask;
 import cn.pompip.adb.App;
 import cn.pompip.adb.Tools;
 import cn.pompip.utils.Log;
+import cn.pompip.utils.Res;
 import org.junit.Test;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.google.common.io.Resources.getResource;
 
 
 public class TestSome {
@@ -72,6 +77,11 @@ public class TestSome {
             e.printStackTrace();
         }
 
+    }
+    @Test public void testFile(){
+
+        File file = Res.get("/html/chat.html");
+        System.out.println(file.getAbsolutePath());
     }
 
 

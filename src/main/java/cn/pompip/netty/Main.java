@@ -1,5 +1,6 @@
 package cn.pompip.netty;
 
+import cn.pompip.utils.Res;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -15,10 +16,14 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.stream.ChunkedFile;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import kotlin.text.Charsets;
 
+import java.io.File;
 import java.time.LocalDateTime;
+
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 
 public class Main {
     public static void main(String[] args) {
@@ -48,19 +53,28 @@ public class Main {
                     .addLast(new WebSocketServerProtocolHandler("/ws"))
 
 //                    .addLast("httpServerCodec", new HttpServerCodec())
-                    .addLast(new SimpleChannelInboundHandler<Object>() {
+                    .addLast(new SimpleChannelInboundHandler<HttpRequest>() {
                         @Override
-                        protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+                        protected void channelRead0(ChannelHandlerContext ctx, HttpRequest msg) throws Exception {
 //                            System.out.println(msg.uri());
 //                            System.out.println(msg.method());
                             System.out.println(msg.getClass());
+                            ChunkedFile file = new ChunkedFile(Res.get("/html/chat.html"));
                             DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
-                                    HttpResponseStatus.OK, Unpooled.wrappedBuffer("httl".getBytes()));
+                                    HttpResponseStatus.OK);
 
-                            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain;charset=UTF-8");
-                            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
+                            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html;charset=UTF-8");
+//                            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
                             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-                            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+                            response.headers().add(CONTENT_LENGTH, file.length());
+                            ctx.write(response);
+                            ctx.write(file);
+
+                            ChannelFuture future = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+
+                            future.addListener(ChannelFutureListener.CLOSE);
+
+
 
                         }
 

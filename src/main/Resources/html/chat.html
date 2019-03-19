@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta charset="UTF-8">
+    <title>交流中心</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script>
+        /**
+         public String fromUserID;
+         public String toUserID;
+         public Long time;
+         public String msgData;
+         */
+
+        let chatMessage = [];
+        let online = [];
+        let meID;
+
+        function receiveMsg(msg) {
+            console.log(msg);
+            return;
+            let json = JSON.parse(msg);
+            if (json.cmd === 1) {
+                chatMessage.push(JSON.parse(json.body));
+                refreshChatArea()
+            } else if (json.cmd === 2) {
+                meID = JSON.parse(json.body).userID;
+                $("#header").html("me ：" + meID);
+                refreshOnline();
+            } else if (json.cmd === 3) {
+                online = JSON.parse(json.body);
+                refreshOnline();
+            }
+        }
+
+        function refreshChatArea() {
+            let inChat = "";
+            for (let i of chatMessage) {
+                if (toUserID === i.fromUserID || toUserID === i.toUserID) {
+                    inChat += ("<p>" + i.fromUserID + " : " + i.msgData + "</p>");
+                }
+            }
+            $("#msgArea").html("");
+            $("#msgArea").append(inChat);
+            $('#msgArea').scrollTop($('#msgArea')[0].scrollHeight);
+        }
+
+        function refreshOnline() {
+            let users = [];
+            online.forEach(function (it) {
+                if (meID !== it) {
+                    users.push(it);
+                }
+            });
+            $("#userArea").html("<p class='onLineUser' style='background: lightgrey'>all</p>");
+            for (let i of users) {
+                let user = "<p class='onLineUser' >" + i + "</p>";
+                $("#userArea").append(user);
+            }
+            $("p.onLineUser").click(function () {
+                toUserID = $(this).html();
+                $("p.onLineUser").css("background", "gray");
+                $(this).css("background", "lightgray");
+                refreshChatArea();
+            })
+        }
+
+        let ws = new WebSocket("ws://java.asuscomm.com:8000"  + "/ws");
+        ws.onmessage = function (ev) {
+            let data = ev.data;
+            receiveMsg(data)
+        };
+        ws.onopen = function (ev) {
+            let msgCMD = {
+                "cmd": 2,
+                "body": "web"
+            };
+            ws.send(JSON.stringify(msgCMD))
+        };
+        ws.onerror = function (ev) {
+            alert(ev.data)
+        };
+        ws.onclose = function (ev) {
+            alert("please type F5 to Refresh!");
+        };
+        let toUserID = "all";
+
+        function send() {
+            let msg = $("#sendData").html();
+            let data = {"toUserID": toUserID, "fromUserID": meID, "msgData": msg};
+            let jsonString = JSON.stringify(data);
+            chatMessage.push(data);
+            let msgCMD = {
+                "cmd": 1,
+                "body": jsonString
+            };
+            ws.send(JSON.stringify(msgCMD));
+            refreshChatArea()
+        }
+    </script>
+    <style>
+        main {
+            width: 20rem;
+            height: 35rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #userArea {
+            float: left;
+            background: #4fc08d;
+            overflow: auto;
+        }
+
+        #msgArea {
+            float: left;
+            background: lightgray;
+            overflow: auto;
+        }
+
+        p.onLineUser {
+            float: bottom;
+            padding: 10px;
+            margin: 0;
+            background: gray;
+        }
+
+        p {
+            float: bottom;
+            padding: 10px;
+            margin: 0;
+            background: lightgray;
+        }
+
+    </style>
+</head>
+<body>
+
+<main>
+    <div id="header">me:</div>
+    <div id="userArea" style="width: 8rem;height: 35rem ;float: left;background: #4fc08d;"></div>
+    <div style="width: 12rem ;height: 35rem;float: left;">
+        <div id="msgArea" title="聊天" style="width: 12rem ;height: 30rem ;float: left">
+            <p class="fromMe">connection success</p>
+        </div>
+
+        <div title="send" style=" background: gold;width: 12rem ;height: 5rem ;float: left">
+            <div id="sendData" contenteditable="true" style="float: left;width: 8rem;height: 5rem;overflow: auto"></div>
+            <button id="sendButton" onclick="send()"
+                    style="float: right ;text-align: center;width: 4rem;height: 5rem">SEND
+            </button>
+        </div>
+    </div>
+    <p style="text-align: center">Author:liu_Kechong .Just for fun</p>
+</main>
+</body>
+</html>
