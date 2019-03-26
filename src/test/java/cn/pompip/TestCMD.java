@@ -6,6 +6,6 @@ import org.junit.Test;
 public class TestCMD {
     @Test
     public void testCmd(){
-        CMD.execCommand(new String[]{"adb shell","su","ls"},false);
+        CMD.execCommand(new String[]{"adb devices"},CMD.Command.cmd);
     }
 }

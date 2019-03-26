@@ -22,15 +22,16 @@ public class ResultRunnable implements Runnable {
         try {
             BufferedReader successResult = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("GB2312")));
             StringBuilder successMsg = new StringBuilder();
-            while (true) {
+            while (!Thread.interrupted()) {
                 String s = successResult.readLine();
                 if (s != null) {
                     successMsg.append(s);
                     commandResult.successMsg = successMsg.toString();
                     ResultLog.i(TAG, s);
+                } else {
+                    break;
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             if (inputStream != null) {

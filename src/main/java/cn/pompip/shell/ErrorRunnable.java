@@ -22,12 +22,14 @@ public class ErrorRunnable implements Runnable {
         BufferedReader errorResult = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("GB2312")));
         StringBuilder errorMsg = new StringBuilder();
         String s;
-        while (true) {
+        while (!Thread.interrupted()) {
             try {
                 if ((s = errorResult.readLine()) != null) {
                     errorMsg.append(s);
                     commandResult.errorMsg = errorMsg.toString();
                     ResultLog.i(TAG, s);
+                }else {
+                    break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
